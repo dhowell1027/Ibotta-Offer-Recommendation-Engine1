@@ -1,0 +1,9 @@
+pandas
+scikit-learn
+numpy
+fastapi
+uvicorn
+jinja2
+matplotlib
+kaggle
+plotly
