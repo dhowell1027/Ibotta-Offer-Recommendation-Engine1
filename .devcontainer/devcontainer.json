@@ -1,6 +1,14 @@
 {
-    "name": "Ibotta Offer Recommendation Engine",
-    "dockerFile": "Dockerfile",
-    "postCreateCommand": "pip install -r requirements.txt && python scripts/download_and_preprocess.py"
+  "name": "Ibotta Offer Recommendation Engine",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "postCreateCommand": "pip install -r requirements.txt && python scripts/download_and_preprocess.py",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python"
+      ]
+    }
   }
-  
+}
