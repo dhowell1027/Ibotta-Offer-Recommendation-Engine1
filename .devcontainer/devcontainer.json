@@ -1,0 +1,6 @@
+{
+    "name": "Ibotta Offer Recommendation Engine",
+    "dockerFile": "Dockerfile",
+    "postCreateCommand": "pip install -r requirements.txt && python scripts/download_and_preprocess.py"
+  }
+  
