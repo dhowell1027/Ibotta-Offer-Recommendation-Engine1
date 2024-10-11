@@ -1,18 +1,24 @@
-# Use the base Alpine image for a lightweight container
-FROM mcr.microsoft.com/devcontainers/base:alpine
+# Use the official Python image as the base image
+FROM python:3.11
 
-# Install Python and pip
-RUN apk add --no-cache python3 py3-pip
+# Set the working directory in the container
+WORKDIR /workspace
 
-# Set the working directory inside the container
-WORKDIR /workspaces/Ibotta-Offer-Recommendation-Engine1
+# Copy the current directory contents into the container
+COPY . /workspace
 
-# Install project dependencies
-COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
+# Install any necessary system dependencies
+RUN apt-get update && apt-get install -y \
+    && rm -rf /var/lib/apt/lists/*
 
-# Expose port 8000 for the FastAPI app
+# Install pip and necessary Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Make sure the Kaggle API credentials directory exists and set proper permissions
+RUN mkdir -p /root/.kaggle && chmod 600 /root/.kaggle
+
+# Expose port 8000 to be used by FastAPI
 EXPOSE 8000
 
-# Set the default command to run the FastAPI app
+# Run the FastAPI app with uvicorn
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

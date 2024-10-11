@@ -1,15 +1,27 @@
+"containerEnv": {
+    "KAGGLE_USERNAME": "aiverinex",
+    "KAGGLE_KEY": "f803a14c85d0b99b9a3970cddf736660"
+}
 {
-  "name": "Ibotta Offer Recommendation Engine",
+  "name": "Python 3 with FastAPI",
   "build": {
-    "dockerfile": "Dockerfile"
+      "dockerfile": "Dockerfile",
+      "context": ".."
   },
-  "postCreateCommand": "pip3 install -r requirements.txt && python scripts/download_and_preprocess.py",
-  "customizations": {
-    "vscode": {
-      "extensions": [
-        "ms-python.python"
-      ]
-    }
+  "settings": {
+      "python.pythonPath": "/usr/local/bin/python",
+      "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+      "ms-python.python",
+      "ms-azuretools.vscode-docker",
+      "ms-toolsai.jupyter",
+      "ms-python.vscode-pylance"
+  ],
+  "forwardPorts": [8000],
+  "postCreateCommand": "pip install -r requirements.txt && python scripts/download_instacart_data.py && python scripts/download_and_preprocess.py",
+  "remoteUser": "vscode",
+  "features": {
+      "docker-in-docker": "latest"
   }
 }
-

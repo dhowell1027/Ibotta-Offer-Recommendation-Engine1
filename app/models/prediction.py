@@ -1,41 +1,54 @@
-from sklearn.ensemble import RandomForestClassifier
 import pandas as pd
+import joblib
+import os
 
-# Function to train a mock prediction model (this should ideally be done in a separate training script)
-def train_offer_prediction_model():
-    # Load example data (you should replace this with your actual data)
-    user_data = pd.read_csv('data/cleaned_orders.csv')
+# Path to the trained model
+MODEL_PATH = "models/offer_redemption_model.pkl"
 
-    # Example features: number of past purchases and time of day of the order
-    user_data['num_purchases'] = user_data.groupby('user_id')['order_id'].transform('count')
-    user_data['is_morning'] = user_data['order_hour_of_day'].apply(lambda x: 1 if 5 <= x <= 11 else 0)
-
-    # Creating a mock target variable 'offer_redeemed' (replace this with actual labels)
-    user_data['offer_redeemed'] = user_data['num_purchases'].apply(lambda x: 1 if x > 10 else 0)
-
-    # Features and target variable
-    X = user_data[['num_purchases', 'is_morning']]
-    y = user_data['offer_redeemed']
-
-    # Train a simple RandomForestClassifier model
-    model = RandomForestClassifier()
-    model.fit(X, y)
-
+def load_model():
+    if not os.path.exists(MODEL_PATH):
+        raise FileNotFoundError(f"Model file not found at {MODEL_PATH}. Please train the model first.")
+    
+    model = joblib.load(MODEL_PATH)
     return model
 
-# Function to predict if the offer will be redeemed by the user
-def predict_offer_redemption(user_data):
-    # Mock training of the model (in real applications, load a pre-trained model)
-    model = train_offer_prediction_model()
+# Function to predict offer redemption probability
+def predict_offer_redemption(user_id: int, offer_id: int):
+    model = load_model()
+    
+    # Simulate loading user features (e.g., past purchases)
+    user_features = get_user_features(user_id)
+    offer_features = get_offer_features(offer_id)
+    
+    # Combine user and offer features for prediction input
+    features = combine_user_and_offer_features(user_features, offer_features)
+    
+    # Predict the redemption probability
+    redemption_probability = model.predict_proba([features])[0][1]  # Probability of class 1 (redemption)
+    
+    return redemption_probability
 
-    # Extract features from the user_data
-    num_purchases = user_data.features['purchase_history']
-    is_morning = 1 if user_data.features['time_of_day'] == 'morning' else 0
+# Example function to retrieve user features (in practice, use real data)
+def get_user_features(user_id):
+    # Placeholder: Returning some dummy features based on user_id
+    return {
+        'purchase_count': 10,
+        'loyalty_score': 0.8,
+    }
 
-    # Prepare the data for prediction
-    X_predict = [[num_purchases, is_morning]]
+# Example function to retrieve offer features
+def get_offer_features(offer_id):
+    return {
+        'offer_discount': 0.15,
+        'offer_category': 1,  # Could be one-hot encoded categories
+    }
 
-    # Predict if the offer will be redeemed
-    prediction = model.predict(X_predict)
-
-    return bool(prediction[0])
+# Combine user and offer features into a single feature vector
+def combine_user_and_offer_features(user_features, offer_features):
+    combined_features = [
+        user_features['purchase_count'],
+        user_features['loyalty_score'],
+        offer_features['offer_discount'],
+        offer_features['offer_category']
+    ]
+    return combined_features
